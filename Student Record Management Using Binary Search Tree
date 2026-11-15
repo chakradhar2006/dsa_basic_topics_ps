@@ -1,0 +1,302 @@
+#include <iostream>
+using namespace std;
+
+struct Node
+{
+    int roll;
+    Node *left, *right;
+
+    Node(int r)
+    {
+        roll = r;
+        left = right = NULL;
+    }
+};
+
+// Insert student record
+Node* insert(Node* root, int roll)
+{
+    if (root == NULL)
+        return new Node(roll);
+
+    if (roll < root->roll)
+        root->left = insert(root->left, roll);
+    else if (roll > root->roll)
+        root->right = insert(root->right, roll);
+    else
+        cout << "Roll number already exists!\n";
+
+    return root;
+}
+
+// Find minimum roll number
+Node* findMin(Node* root)
+{
+    if (root == NULL)
+        return NULL;
+
+    while (root->left != NULL)
+        root = root->left;
+
+    return root;
+}
+
+// Find maximum roll number
+Node* findMax(Node* root)
+{
+    if (root == NULL)
+        return NULL;
+
+    while (root->right != NULL)
+        root = root->right;
+
+    return root;
+}
+
+// Search student
+Node* search(Node* root, int roll)
+{
+    if (root == NULL || root->roll == roll)
+        return root;
+
+    if (roll < root->roll)
+        return search(root->left, roll);
+
+    return search(root->right, roll);
+}
+
+// Find predecessor
+Node* predecessor(Node* root, int roll)
+{
+    Node* pred = NULL;
+
+    while (root != NULL)
+    {
+        if (roll > root->roll)
+        {
+            pred = root;
+            root = root->right;
+        }
+        else
+            root = root->left;
+    }
+
+    return pred;
+}
+
+// Find successor
+Node* successor(Node* root, int roll)
+{
+    Node* succ = NULL;
+
+    while (root != NULL)
+    {
+        if (roll < root->roll)
+        {
+            succ = root;
+            root = root->left;
+        }
+        else
+            root = root->right;
+    }
+
+    return succ;
+}
+
+// Delete student record
+Node* deleteNode(Node* root, int roll)
+{
+    if (root == NULL)
+        return NULL;
+
+    if (roll < root->roll)
+        root->left = deleteNode(root->left, roll);
+    else if (roll > root->roll)
+        root->right = deleteNode(root->right, roll);
+    else
+    {
+        // No child or one child
+        if (root->left == NULL)
+        {
+            Node* temp = root->right;
+            delete root;
+            return temp;
+        }
+        else if (root->right == NULL)
+        {
+            Node* temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        // Two children
+        Node* temp = findMin(root->right);
+        root->roll = temp->roll;
+        root->right = deleteNode(root->right, temp->roll);
+    }
+
+    return root;
+}
+
+// Inorder traversal
+void inorder(Node* root)
+{
+    if (root != NULL)
+    {
+        inorder(root->left);
+        cout << root->roll << " ";
+        inorder(root->right);
+    }
+}
+
+// Preorder traversal
+void preorder(Node* root)
+{
+    if (root != NULL)
+    {
+        cout << root->roll << " ";
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+// Postorder traversal
+void postorder(Node* root)
+{
+    if (root != NULL)
+    {
+        postorder(root->left);
+        postorder(root->right);
+        cout << root->roll << " ";
+    }
+}
+
+// Main function
+int main()
+{
+    Node* root = NULL;
+    int choice, roll;
+
+    do
+    {
+        cout << "\n\n--- STUDENT RECORD MANAGEMENT ---";
+        cout << "\n1. Insert Student";
+        cout << "\n2. Find Minimum Roll Number";
+        cout << "\n3. Find Maximum Roll Number";
+        cout << "\n4. Search Student";
+        cout << "\n5. Find Predecessor";
+        cout << "\n6. Find Successor";
+        cout << "\n7. Delete Student";
+        cout << "\n8. Inorder Display";
+        cout << "\n9. Preorder Display";
+        cout << "\n10. Postorder Display";
+        cout << "\n0. Exit";
+        cout << "\nEnter your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+            case 1:
+                cout << "Enter roll number: ";
+                cin >> roll;
+                root = insert(root, roll);
+                break;
+
+            case 2:
+            {
+                Node* temp = findMin(root);
+                if (temp)
+                    cout << "Minimum Roll Number: " << temp->roll;
+                else
+                    cout << "BST is empty!";
+                break;
+            }
+
+            case 3:
+            {
+                Node* temp = findMax(root);
+                if (temp)
+                    cout << "Maximum Roll Number: " << temp->roll;
+                else
+                    cout << "BST is empty!";
+                break;
+            }
+
+            case 4:
+                cout << "Enter roll number to search: ";
+                cin >> roll;
+                if (search(root, roll))
+                    cout << "Student found!";
+                else
+                    cout << "Student not found!";
+                break;
+
+            case 5:
+                cout << "Enter roll number: ";
+                cin >> roll;
+                if (search(root, roll))
+                {
+                    Node* temp = predecessor(root, roll);
+                    if (temp)
+                        cout << "Predecessor: " << temp->roll;
+                    else
+                        cout << "No predecessor exists!";
+                }
+                else
+                    cout << "Student not found!";
+                break;
+
+            case 6:
+                cout << "Enter roll number: ";
+                cin >> roll;
+                if (search(root, roll))
+                {
+                    Node* temp = successor(root, roll);
+                    if (temp)
+                        cout << "Successor: " << temp->roll;
+                    else
+                        cout << "No successor exists!";
+                }
+                else
+                    cout << "Student not found!";
+                break;
+
+            case 7:
+                cout << "Enter roll number to delete: ";
+                cin >> roll;
+                if (search(root, roll))
+                {
+                    root = deleteNode(root, roll);
+                    cout << "Student record deleted!";
+                }
+                else
+                    cout << "Student not found!";
+                break;
+
+            case 8:
+                cout << "Inorder: ";
+                inorder(root);
+                break;
+
+            case 9:
+                cout << "Preorder: ";
+                preorder(root);
+                break;
+
+            case 10:
+                cout << "Postorder: ";
+                postorder(root);
+                break;
+
+            case 0:
+                cout << "Exiting program...";
+                break;
+
+            default:
+                cout << "Invalid choice!";
+        }
+
+    } while (choice != 0);
+
+    return 0;
+}
