@@ -1,0 +1,136 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define SIZE 5
+
+int queueArr[SIZE];
+int front = -1, rear = -1;
+int countRequests = 0;
+
+// Add customer request
+void enqueue(int request) {
+    if (countRequests == SIZE) {
+        cout << "Queue is Full!" << endl;
+        return;
+    }
+
+    if (front == -1) {
+        front = 0;
+    }
+
+    rear = (rear + 1) % SIZE;
+    queueArr[rear] = request;
+    countRequests++;
+
+    cout << "Request " << request << " added successfully!" << endl;
+}
+
+// Resolve customer request
+void dequeue() {
+    if (front == -1) {
+        cout << "Queue is Empty!" << endl;
+        return;
+    }
+
+    cout << "Request " << queueArr[front]
+         << " resolved successfully!" << endl;
+
+    countRequests--;
+
+    if (front == rear) {
+        front = rear = -1;
+    }
+    else {
+        front = (front + 1) % SIZE;
+    }
+}
+
+// Display pending requests
+void display() {
+    if (front == -1) {
+        cout << "No pending requests!" << endl;
+        return;
+    }
+
+    cout << "Pending Requests: ";
+
+    int i = front;
+
+    while (true) {
+        cout << queueArr[i] << " ";
+
+        if (i == rear)
+            break;
+
+        i = (i + 1) % SIZE;
+    }
+
+    cout << endl;
+}
+
+// Display total pending requests
+void totalCount() {
+    cout << "Total Pending Requests: "
+         << countRequests << endl;
+}
+
+// View next customer request
+void nextRequest() {
+    if (front == -1) {
+        cout << "No pending requests!" << endl;
+    }
+    else {
+        cout << "Next Request to Resolve: "
+             << queueArr[front] << endl;
+    }
+}
+
+int main() {
+    int choice, request;
+
+    do {
+        cout << "\n----- Customer Service System -----" << endl;
+        cout << "1. Add Request" << endl;
+        cout << "2. Resolve Request" << endl;
+        cout << "3. Display Requests" << endl;
+        cout << "4. Total Pending Requests" << endl;
+        cout << "5. View Next Request" << endl;
+        cout << "6. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter Request ID: ";
+                cin >> request;
+                enqueue(request);
+                break;
+
+            case 2:
+                dequeue();
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                totalCount();
+                break;
+
+            case 5:
+                nextRequest();
+                break;
+
+            case 6:
+                cout << "Exiting..." << endl;
+                break;
+
+            default:
+                cout << "Invalid Choice!" << endl;
+        }
+
+    } while (choice != 6);
+
+    return 0;
+}
