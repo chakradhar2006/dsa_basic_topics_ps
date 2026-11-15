@@ -1,0 +1,130 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define SIZE 100
+
+char st[SIZE];
+int top = -1;
+
+// Push operation
+void push(char item) {
+    if (top >= SIZE - 1) {
+        cout << "Stack Overflow";
+        exit(1);
+    }
+    else {
+        top++;
+        st[top] = item;
+    }
+}
+
+// Pop operation
+char pop() {
+    if (top < 0) {
+        cout << "Stack Underflow";
+        exit(1);
+    }
+    else {
+        char item = st[top];
+        top--;
+        return item;
+    }
+}
+
+// Check whether character is an operator
+int is_operator(char symbol) {
+    if (symbol == '^' || symbol == '*' ||
+        symbol == '/' || symbol == '+' ||
+        symbol == '-') {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+// Operator precedence
+int precedence(char symbol) {
+    if (symbol == '^')  return 3;
+    else if (symbol == '*' || symbol == '/')
+        return 2;
+    else if (symbol == '+' || symbol == '-')
+        return 1;
+    else
+        return 0;
+}
+
+// Infix to Postfix Conversion
+void InfixToPostfix(char infix[], char postfix[]) {
+    int i = 0, j = 0;
+    char item, x;
+
+    push('(');
+    strcat(infix, ")");
+
+    item = infix[i];
+
+    while (item != '\0') {
+        if (item == '(') {
+            push(item);
+        }
+        else if (isdigit(item) || isalpha(item)) {
+            postfix[j] = item;
+            j++;
+        }
+        else if (is_operator(item) == 1) {
+            x = pop();
+
+            while (is_operator(x) == 1 &&
+                  (precedence(x) > precedence(item) ||
+                  (precedence(x) == precedence(item) && item != '^'))) {
+                postfix[j] = x;
+                j++;
+                x = pop();
+            }
+
+            push(x);
+            push(item);
+        }
+        else if (item == ')') {
+            x = pop();
+
+            while (x != '(') {
+                postfix[j] = x;
+                j++;
+                x = pop();
+            }
+        }
+        else if (item == ' ') {  // Ignore spaces
+        }
+        else {
+            cout << "Invalid Infix Expression";
+            exit(1);
+        }
+
+        i++;
+        item = infix[i];
+    }
+
+    if (top > 0) {
+        cout << "Invalid Infix Expression";
+        exit(1);
+    }
+
+    postfix[j] = '\0';
+}
+
+// Main function
+int main() {
+    char infix[SIZE + 1];
+    char postfix[SIZE + 1];
+
+    cout << "Enter Infix Expression: ";
+    cin.getline(infix, SIZE);
+
+    InfixToPostfix(infix, postfix);
+
+    cout << "Postfix Expression: " << postfix << endl;
+
+    return 0;
+}
