@@ -1,0 +1,103 @@
+#include <iostream>
+#include <cstring>
+using namespace std;
+
+struct Friend
+{
+    char name[50];
+    char mobile[15];
+};
+
+int main()
+{
+    Friend phonebook[100], temp;
+
+    int n, i, j, pos;
+    char searchName[50];
+
+    bool found = false;
+
+    cout << "Enter number of friends: ";
+    cin >> n;
+
+    for (i = 0; i < n; i++)
+    {
+        cout << "Enter name: ";
+        cin >> phonebook[i].name;
+
+        cout << "Enter mobile number: ";
+        cin >> phonebook[i].mobile;
+    }
+
+    // Bubble sort according to name
+    for (i = 0; i < n - 1; i++)
+    {
+        for (j = 0; j < n - i - 1; j++)
+        {
+            if (strcmp(phonebook[j].name,
+                       phonebook[j + 1].name) > 0)
+            {
+                temp = phonebook[j];
+                phonebook[j] = phonebook[j + 1];
+                phonebook[j + 1] = temp;
+            }
+        }
+    }
+
+    cout << "Enter friend's name to search: ";
+    cin >> searchName;
+
+    // Search friend
+    for (i = 0; i < n; i++)
+    {
+        if (strcmp(phonebook[i].name, searchName) == 0)
+        {
+            cout << "Friend found\n";
+            cout << "Name: " << phonebook[i].name << endl;
+            cout << "Mobile: " << phonebook[i].mobile << endl;
+
+            found = true;
+            break;
+        }
+    }
+
+    if (!found)
+    {
+        cout << "Friend not found\n";
+
+        cout << "Enter mobile number: ";
+        cin >> temp.mobile;
+
+        strcpy(temp.name, searchName);
+
+        // Find correct position
+        pos = 0;
+
+        while (pos < n &&
+               strcmp(phonebook[pos].name, temp.name) < 0)
+        {
+            pos++;
+        }
+
+        // Shift elements
+        for (i = n; i > pos; i--)
+        {
+            phonebook[i] = phonebook[i - 1];
+        }
+
+        // Insert new friend
+        phonebook[pos] = temp;
+        n++;
+
+        cout << "Friend added successfully.\n";
+    }
+
+    cout << "\nPhonebook:\n";
+
+    for (i = 0; i < n; i++)
+    {
+        cout << phonebook[i].name << " - " << phonebook[i].mobile << endl;
+    }
+
+    return 0;
+}
